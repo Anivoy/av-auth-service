@@ -8,7 +8,7 @@ import morgan from "morgan";
 
 import { rateLimitConfig } from "./config/env.js";
 
-import routes from "./routes/index.js";
+import routes from "./routers/index.js";
 
 const app = express();
 
@@ -24,7 +24,7 @@ app.use(
   })
 );
 
-app.use("/api", routes);
+app.use("/api/v1", routes);
 
 app.get("/", (req, res) => {
   res.json({ status: "ok", message: "[Anime Scape] Auth service is up" });
