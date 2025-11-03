@@ -12,6 +12,7 @@ import { registerSchema, loginSchema, resetPasswordRequestSchema, resetPasswordC
 
 import dotenv from 'dotenv';
 import { jwtConfig, bcryptConfig } from '../config/env.js';
+import { sendResetPassword } from '../utils/sendResetPassword.js';
 dotenv.config();
 
 export async function authRegister(req, res) {
@@ -56,7 +57,7 @@ export async function authLogin(req, res) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const accessToken = signAccessToken({ sub: user.id, email: user.email });
+    const accessToken = signAccessToken({ sub: user.id, email: user.email, displayName: user.displayName });
 
     const refreshToken = randomToken(32);
     const refreshTokenHash = sha256(refreshToken);
@@ -177,7 +178,7 @@ export async function authRefreshToken(req, res) {
 
 export async function authResetPasswordRequest(req, res) {
   try {
-    const { email } = resetPasswordRequestSchema.parse(req.body);
+    const { name, email, resetUrl } = resetPasswordRequestSchema.parse(req.body);
 
     const user = await prisma.userAuth.findUnique({ where: { email } });
     if (!user) {
@@ -197,10 +198,16 @@ export async function authResetPasswordRequest(req, res) {
       }
     });
 
-    logger.info(`Password reset token generated for user ${user.email} (ID: ${user.id}).`);
-    // TODO: send email with reset link
-    // For dev only: return token (do not do this in prod)
-    return res.status(200).json({ ok: true, resetToken: token });
+    logger.info(`Password reset token generated and sent for user ${user.email} (ID: ${user.id}).`);
+
+    await sendResetPassword({
+      name,
+      recepient: email,
+      resetUrlBase: resetUrl,
+      token
+    })
+
+    return res.json({ ok: true });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: 'Validation failed', details: error.errors });
@@ -255,19 +262,12 @@ export async function authResetPasswordConfirm(req, res) {
 }
 
 export async function authMe(req, res) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'No access token' });
-  }
-
-  const accessToken = authHeader.substring(7);
-
   try {
-    const decoded = verifyAccessToken(accessToken);
+    const { id } = req.user;
 
-    const user = await prisma.userAuth.findUnique({ where: { id: decoded.sub } });
+    const user = await prisma.userAuth.findUnique({ where: { id } });
     if (!user) {
-      logger.warn(`Auth check failed: User ID ${decoded.sub} from access token not found in DB.`);
+      logger.warn(`Auth check failed: User ID ${id} from access token not found in DB.`);
       return res.status(404).json({ error: 'User not found' });
     }
 
