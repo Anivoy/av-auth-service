@@ -1,0 +1,35 @@
+version: '3.9'
+
+networks:
+  anivoy-shared-net:
+    external: true
+
+services:
+  auth:
+    build:
+      context: .
+      target: development
+    container_name: anivoy-auth-service
+    image: anivoy-auth-service-image
+    ports:
+      - '5087:5087'
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - anivoy-shared-net
+
+  auth-cron:
+    container_name: anivoy-auth-cron
+    image: anivoy-auth-service-image
+    command: ['npm', 'run', 'cron']
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    networks:
+      - anivoy-shared-net
