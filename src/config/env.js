@@ -2,15 +2,45 @@ import { config } from "dotenv";
 config();
 
 const serverConfig = Object.freeze({
-  PORT: process.env.PORT || 5087
+  PORT: parseInt(process.env.PORT || "5087"),
+  MODE: process.env.NODE_ENV || "production",
+  DATABASE_URL: process.env.DATABASE_URL
 });
 
 const rateLimitConfig = Object.freeze({
-  GLOBAL_LIMIT_WINDOW: process.env.GLOBAL_LIMIT_WINDOW || 15 * 60 * 1000, // 15 minutes
-  GLOBAL_LIMIT_MAX: process.env.GLOBAL_LIMIT_MAX || 100
+  GLOBAL_LIMIT_WINDOW: parseInt(process.env.GLOBAL_LIMIT_WINDOW || `${15 * 60 * 1000}`), // 15 minutes
+  GLOBAL_LIMIT_MAX: parseInt(process.env.GLOBAL_LIMIT_MAX || "100")
+})
+
+const jwtConfig = Object.freeze({
+  JWT_ISSUER: process.env.JWT_ISSUER,
+  JWT_AUD: process.env.JWT_AUD,
+  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "1h",
+  JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN || "7d"
+})
+
+const keysConfig = Object.freeze({
+  PUBLIC_KEY_PATH: process.env.PUBLIC_KEY_PATH,
+  PRIVATE_KEY_PATH: process.env.PRIVATE_KEY_PATH
+})
+
+const bcryptConfig = Object.freeze({
+  BCRYPT_ROUNDS: parseInt(process.env.BCRYPT_ROUNDS || "12")
+})
+
+const emailSendingConfig = Object.freeze({
+  EMAIL_SENDING_KEY: process.env.EMAIL_SENDING_KEY,
+  EMAIL_API_URL: process.env.EMAIL_API_URL,
+  EMAIL_USERNAME: process.env.EMAIL_USERNAME,
+  EMAIL_DOMAIN: process.env.EMAIL_DOMAIN,
+  EMAIL_RESET_PASSWORD_TEMPLATE: process.env.EMAIL_RESET_PASSWORD_TEMPLATE
 })
 
 export {
   serverConfig,
-  rateLimitConfig
+  rateLimitConfig,
+  jwtConfig,
+  keysConfig,
+  bcryptConfig,
+  emailSendingConfig
 }
