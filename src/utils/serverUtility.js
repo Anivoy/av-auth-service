@@ -1,6 +1,6 @@
 import prisma from "../db/index.js"
-
 import figlet from "figlet";
+import { serverConfig } from "../config/env.js";
 
 export function displayBanner() {
   const banner = figlet.textSync('Anivoy', {
@@ -10,7 +10,7 @@ export function displayBanner() {
   });
 
   console.log('\n' + banner);
-  console.log('Authentication Service v1.0.0\n');
+  console.log(`Authentication Service v1.0.0 [${serverConfig.MODE}]\n`);
 };
 
 export async function testDatabaseConnection(maxRetries = 5, retryDelay = 3000) {

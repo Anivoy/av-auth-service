@@ -3,6 +3,7 @@ config();
 
 const serverConfig = Object.freeze({
   PORT: parseInt(process.env.PORT || "5087"),
+  MODE: process.env.NODE_ENV || "production",
   DATABASE_URL: process.env.DATABASE_URL
 });
 
@@ -27,10 +28,19 @@ const bcryptConfig = Object.freeze({
   BCRYPT_ROUNDS: parseInt(process.env.BCRYPT_ROUNDS || "12")
 })
 
+const emailSendingConfig = Object.freeze({
+  EMAIL_SENDING_KEY: process.env.EMAIL_SENDING_KEY,
+  EMAIL_API_URL: process.env.EMAIL_API_URL,
+  EMAIL_USERNAME: process.env.EMAIL_USERNAME,
+  EMAIL_DOMAIN: process.env.EMAIL_DOMAIN,
+  EMAIL_RESET_PASSWORD_TEMPLATE: process.env.EMAIL_RESET_PASSWORD_TEMPLATE
+})
+
 export {
   serverConfig,
   rateLimitConfig,
   jwtConfig,
   keysConfig,
-  bcryptConfig
+  bcryptConfig,
+  emailSendingConfig
 }
