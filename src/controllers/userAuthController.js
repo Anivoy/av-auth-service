@@ -10,10 +10,8 @@ import { setRefreshCookie, clearAuthCookies } from '../utils/cookie.js';
 import z from 'zod';
 import { registerSchema, loginSchema, resetPasswordRequestSchema, resetPasswordConfirmSchema } from '../validations/userAuthValidation.js';
 
-import dotenv from 'dotenv';
 import { jwtConfig, bcryptConfig } from '../config/env.js';
 import { sendResetPassword } from '../utils/sendResetPassword.js';
-dotenv.config();
 
 export async function authRegister(req, res) {
   try {

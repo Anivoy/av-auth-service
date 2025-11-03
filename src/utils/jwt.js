@@ -2,9 +2,7 @@ import fs from 'fs';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 
-import dotenv from 'dotenv';
 import { jwtConfig, keysConfig } from '../config/env.js';
-dotenv.config();
 
 const PRIVATE_KEY = fs.readFileSync(keysConfig.PRIVATE_KEY_PATH, 'utf8');
 const PUBLIC_KEY = fs.readFileSync(keysConfig.PUBLIC_KEY_PATH, 'utf8');
