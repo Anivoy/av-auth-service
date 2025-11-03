@@ -27,7 +27,7 @@ app.use(
 app.use("/api/v1", routes);
 
 app.get("/", (req, res) => {
-  res.json({ status: "ok", message: "[Anime Scape] Auth service is up" });
+  res.json({ status: "ok", message: "Auth service is up" });
 });
 
 export default app;
