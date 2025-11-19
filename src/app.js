@@ -9,6 +9,7 @@ import morgan from "morgan";
 import { rateLimitConfig } from "./config/env.js";
 
 import routes from "./routers/index.js";
+import { errorHandler } from "./middleware/errorMiddleware.js";
 
 const app = express();
 
@@ -25,6 +26,8 @@ app.use(
 );
 
 app.use("/api/v1", routes);
+
+app.use(errorHandler);
 
 app.get("/", (req, res) => {
   res.json({ status: "ok", message: "Auth service is up" });

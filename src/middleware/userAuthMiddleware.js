@@ -19,27 +19,30 @@ export async function authenticate(req, res, next) {
     });
 
     if (!user) {
-      logger.warn(
-        `Auth check failed: User ID ${decoded.sub} from access token not found in DB.`
-      );
+      logger.warn(`Auth failed: User with ID ${decoded.sub} not found.`);
       return res.status(404).json({ error: "User not found" });
+    }
+
+    if (user.isActive === false) {
+      logger.warn(
+        `Auth blocked: User ${user.email} (ID: ${user.id}) is inactive.`
+      );
+      return res.status(403).json({ error: "User is inactive" });
     }
 
     req.user = {
       id: user.id,
       email: user.email,
       displayName: user.displayName,
+      role: user.role,
+      isActive: user.isActive,
     };
 
-    logger.info(
-      `User ${user.email} (ID: ${user.id}) successfully authenticated.`
-    );
+    logger.info(`User ${user.email} (ID: ${user.id}) authenticated.`);
 
     next();
   } catch (err) {
-    logger.warn(
-      `Access token validation failed: ${err.message}. Token was likely expired or malformed.`
-    );
+    logger.warn(`Token validation failed: ${err.message}`);
     return res.status(401).json({ error: "Invalid token" });
   }
 }

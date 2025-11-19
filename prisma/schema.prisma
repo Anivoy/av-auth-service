@@ -12,12 +12,18 @@ model UserAuth {
   email       String   @unique
   password    String
   displayName String?
+  role        Role     @default(USER)
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  refreshTokens RefreshToken[]
+  refreshTokens  RefreshToken[]
   passwordResets PasswordReset[]
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 model RefreshToken {
@@ -30,6 +36,7 @@ model RefreshToken {
   replacedById String?
 
   user UserAuth @relation(fields: [userId], references: [id])
+
   @@index([userId])
 }
 
@@ -42,5 +49,6 @@ model PasswordReset {
   used      Boolean  @default(false)
 
   user UserAuth @relation(fields: [userId], references: [id])
+
   @@index([userId])
 }
