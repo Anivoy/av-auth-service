@@ -15,7 +15,7 @@ router.patch("/setrole/id/:id", authenticate, authorizeRoles("ADMIN"), authSetRo
 
 router.get("/me", authenticate, authMe);
 
-router.post("/refresh-token", authenticate, authRefreshToken)
+router.post("/refresh", authRefreshToken)
 
 router.post("/reset-password/request", authResetPasswordRequest);
 router.post("/reset-password/confirm", authResetPasswordConfirm);
