@@ -1,7 +1,7 @@
 import express from "express";
-import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
+import cookieParser from 'cookie-parser';
 
 import { stream } from "./config/logger.js";
 import morgan from "morgan";
@@ -13,8 +13,11 @@ import { errorHandler } from "./middleware/errorMiddleware.js";
 
 const app = express();
 
-app.use(helmet());
-app.use(cors());
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+}));
+app.use(cookieParser());
 app.use(express.json());
 app.use(morgan("combined", { stream }));
 
