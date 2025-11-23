@@ -12,7 +12,7 @@ services:
     container_name: anivoy-auth-service
     image: anivoy-auth-service-image
     ports:
-      - '5087:5087'
+      - '7100:7100'
     env_file:
       - .env
     restart: unless-stopped

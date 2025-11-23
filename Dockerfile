@@ -28,7 +28,7 @@ ENV NODE_ENV=development
 COPY . /app/
 
 # Expose dev port
-EXPOSE 5087
+EXPOSE 7100
 
 # Command to serve for development
 CMD ["npm", "run", "dev"]
@@ -45,7 +45,7 @@ ENV NODE_ENV=production
 COPY . /app/
 
 # Expose dev port
-EXPOSE 5087
+EXPOSE 7100
 
 # Command to serve for production
 CMD ["node", "server.js"]
