@@ -16,9 +16,6 @@ services:
     env_file:
       - .env
     restart: unless-stopped
-    depends_on:
-      - postgres
-      - redis
     networks:
       - anivoy-shared-net
 
@@ -29,7 +26,5 @@ services:
     env_file:
       - .env
     restart: unless-stopped
-    depends_on:
-      - postgres
     networks:
       - anivoy-shared-net

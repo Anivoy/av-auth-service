@@ -15,9 +15,7 @@ const loginSchema = z.object({
 const idParamSchema = z.uuid('Invalid ID format');
 
 const resetPasswordRequestSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
   email: z.email('Invalid email format'),
-  resetUrl: z.string().min(1, 'Reset password url is required'),
 });
 
 const resetPasswordConfirmSchema = z.object({

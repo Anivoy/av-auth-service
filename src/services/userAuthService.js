@@ -4,7 +4,7 @@ import prisma from '../db/index.js';
 import { signAccessToken, randomToken, sha256 } from '../utils/jwt.js';
 import { logger } from '../config/logger.js';
 import durationToSeconds from '../utils/durationToSeconds.js';
-import { jwtConfig, bcryptConfig } from '../config/env.js';
+import { jwtConfig, bcryptConfig, clientUrlConfig } from '../config/env.js';
 import { sendResetPassword } from '../utils/sendResetPassword.js';
 import { AppError } from '../utils/errorUtility.js';
 
@@ -255,7 +255,16 @@ async function refreshToken(refreshToken) {
   return { accessToken: newAccess, refreshToken: newRefresh };
 }
 
-async function resetPasswordRequest({ name, email, resetUrl }) {
+async function resetPasswordRequest({ email, client = 'web' }) {
+  const parsedClient = client?.trim()?.toUpperCase();
+  if (!Object.keys(clientUrlConfig).includes(parsedClient)) {
+    logger.info(
+      `Password reset requested from invalid or unkown client: ${client}. Returning success to prevent enumeration.`,
+    );
+  }
+
+  const CLIENT_URL = clientUrlConfig?.[parsedClient];
+
   const user = await prisma.userAuth.findUnique({ where: { email } });
   if (!user) {
     logger.info(
@@ -281,9 +290,9 @@ async function resetPasswordRequest({ name, email, resetUrl }) {
   );
 
   await sendResetPassword({
-    name,
-    recepient: email,
-    resetUrlBase: resetUrl,
+    name: user.displayName,
+    recepient: user.email,
+    resetUrlBase: `${CLIENT_URL.URL}${CLIENT_URL.PATHS.CHANGE_PASSWORD}`,
     token,
   });
 
