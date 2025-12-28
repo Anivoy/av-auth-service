@@ -186,3 +186,19 @@ export async function authMe(req, res, next) {
     next(error);
   }
 }
+
+export async function authGenerateTileToken(req, res, next) {
+  const { id, isActive } = req.user;
+
+  try {
+    const result = await userAuthService.generateTileToken(id, isActive);
+
+    res.json({
+      success: true,
+      message: 'Tile token has been generated successfully',
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+}

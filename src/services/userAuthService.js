@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import dayjs from 'dayjs';
 import prisma from '../db/index.js';
-import { signAccessToken, randomToken, sha256 } from '../utils/jwt.js';
+import { signAccessToken, randomToken, sha256, signTileToken } from '../utils/jwt.js';
 import { logger } from '../config/logger.js';
 import durationToSeconds from '../utils/durationToSeconds.js';
 import { jwtConfig, bcryptConfig, clientUrlConfig } from '../config/env.js';
@@ -50,12 +50,18 @@ async function login({ email, password }) {
     throw new AppError('User not active', 403);
   }
 
+  const expiresInSeconds = durationToSeconds(jwtConfig.JWT_EXPIRES_IN);
+
+  const now = dayjs().unix();
+
   const accessToken = signAccessToken({
     sub: user.id,
     email: user.email,
     displayName: user.displayName,
     role: user.role,
     isActive: user.isActive,
+    iat: now,
+    exp: now + expiresInSeconds,
   });
 
   const refreshToken = randomToken(32);
@@ -78,6 +84,7 @@ async function login({ email, password }) {
 
   return {
     accessToken,
+    expiresIn: expiresInSeconds,
     refreshToken,
     user: {
       id: user.id,
@@ -361,6 +368,27 @@ async function getMe(userId) {
   return { id: user.id, email: user.email, displayName: user.displayName };
 }
 
+async function generateTileToken(userId) {
+  const expiresInSeconds = durationToSeconds(jwtConfig.JWT_TILE_EXPIRES_IN);
+
+  const now = dayjs().unix();
+
+  const payload = {
+    sub: userId,
+    aud: 'tile-server',
+    scope: ['tiles:read'],
+    iat: now,
+    exp: now + expiresInSeconds,
+  };
+
+  const token = signTileToken(payload);
+
+  return {
+    tileToken: token,
+    expiresIn: expiresInSeconds,
+  };
+}
+
 export default {
   login,
   register,
@@ -372,4 +400,5 @@ export default {
   resetPasswordConfirm,
   refreshToken,
   getMe,
+  generateTileToken,
 };

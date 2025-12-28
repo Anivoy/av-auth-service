@@ -32,12 +32,18 @@ const jwtConfig = Object.freeze({
   JWT_ISSUER: process.env.JWT_ISSUER,
   JWT_AUD: process.env.JWT_AUD,
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '1h',
+  JWT_TILE_EXPIRES_IN: process.env.JWT_TILE_EXPIRES_IN || '10m',
   JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
 });
 
 const keysConfig = Object.freeze({
   PUBLIC_KEY_PATH: process.env.PUBLIC_KEY_PATH,
   PRIVATE_KEY_PATH: process.env.PRIVATE_KEY_PATH,
+});
+
+const tileKeysConfig = Object.freeze({
+  TILE_PUBLIC_KEY_PATH: process.env.TILE_PUBLIC_KEY_PATH,
+  TILE_PRIVATE_KEY_PATH: process.env.TILE_PRIVATE_KEY_PATH,
 });
 
 const bcryptConfig = Object.freeze({
@@ -57,6 +63,7 @@ export {
   rateLimitConfig,
   jwtConfig,
   keysConfig,
+  tileKeysConfig,
   bcryptConfig,
   emailSendingConfig,
   clientUrlConfig,
