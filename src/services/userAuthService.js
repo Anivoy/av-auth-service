@@ -50,18 +50,12 @@ async function login({ email, password }) {
     throw new AppError('User not active', 403);
   }
 
-  const expiresInSeconds = durationToSeconds(jwtConfig.JWT_EXPIRES_IN);
-
-  const now = dayjs().unix();
-
   const accessToken = signAccessToken({
     sub: user.id,
     email: user.email,
     displayName: user.displayName,
     role: user.role,
     isActive: user.isActive,
-    iat: now,
-    exp: now + expiresInSeconds,
   });
 
   const refreshToken = randomToken(32);
@@ -84,7 +78,6 @@ async function login({ email, password }) {
 
   return {
     accessToken,
-    expiresIn: expiresInSeconds,
     refreshToken,
     user: {
       id: user.id,
@@ -369,23 +362,16 @@ async function getMe(userId) {
 }
 
 async function generateTileToken(userId) {
-  const expiresInSeconds = durationToSeconds(jwtConfig.JWT_TILE_EXPIRES_IN);
-
-  const now = dayjs().unix();
-
   const payload = {
     sub: userId,
     aud: 'tile-server',
     scope: ['tiles:read'],
-    iat: now,
-    exp: now + expiresInSeconds,
   };
 
   const token = signTileToken(payload);
 
   return {
     tileToken: token,
-    expiresIn: expiresInSeconds,
   };
 }
 
